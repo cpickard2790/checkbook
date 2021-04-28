@@ -7,15 +7,15 @@ import com.twilio.type.PhoneNumber;
 public class TwilloSender {
     // Find your Account Sid and Token at twilio.com/console
     // and set the environment variables. See http://twil.io/secure
-    public static final String ACCOUNT_SID = "AC96ba09abd5d5cf9626296c19787b9cfd";
-    public static final String AUTH_TOKEN = "df61fd6f00f7d2eb8efdc619e48d07e8";
+    public static final String ACCOUNT_SID = "";
+    public static final String AUTH_TOKEN = "";
 
     public static void sendMessage(double amount) {
     	try {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message message = Message.creator(
-                new com.twilio.type.PhoneNumber("+19198193556"),
-                new com.twilio.type.PhoneNumber("+19709191073"),
+                new com.twilio.type.PhoneNumber("+"),
+                new com.twilio.type.PhoneNumber("+"),
                 "Your current balance is: $" + amount )
             .create();
 
@@ -29,8 +29,8 @@ public class TwilloSender {
     	try {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message message = Message.creator(
-                new com.twilio.type.PhoneNumber("+19198193556"),
-                new com.twilio.type.PhoneNumber("+19709191073"),
+                new com.twilio.type.PhoneNumber("+"),
+                new com.twilio.type.PhoneNumber("+"),
                 "How much?")
             .create();
 

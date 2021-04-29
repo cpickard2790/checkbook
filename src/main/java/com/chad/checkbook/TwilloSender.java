@@ -19,10 +19,6 @@ public class TwilloSender {
     public static final String ACCOUNT_SID = twilioSID;
     public static final String AUTH_TOKEN = twilioAUTH;
 
-    public static final String ACCOUNT_SID = "";
-    public static final String AUTH_TOKEN = "";
-
-
     public static void sendMessage(double amount) {
     	try {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);

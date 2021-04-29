@@ -15,13 +15,13 @@ public class TwilloSender {
 
     // Find your Account Sid and Token at twilio.com/console
     // and set the environment variables. See http://twil.io/secure
-<<<<<<< HEAD
+
     public static final String ACCOUNT_SID = twilioSID;
     public static final String AUTH_TOKEN = twilioAUTH;
-=======
+
     public static final String ACCOUNT_SID = "";
     public static final String AUTH_TOKEN = "";
->>>>>>> 684d0f9a1aa053675ae7ee5ddcfb1bf9fd2e9078
+
 
     public static void sendMessage(double amount) {
     	try {

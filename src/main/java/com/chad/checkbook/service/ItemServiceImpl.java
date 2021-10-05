@@ -1,5 +1,6 @@
 package com.chad.checkbook.service;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
 		if (repository.count() != 0) {
 			Item lastItem = repository.getOne(repository.findLast());
 			double total = lastItem.getBalance() + item.getDeposit();
-			item.setBalance(total);
+			item.setBalance(roundTwoDecimals(total));
 		}
 		else {
 			item.setBalance(item.getDeposit());
@@ -49,5 +50,11 @@ public class ItemServiceImpl implements ItemService {
 		}
 		return 0.0;
 	}
-	
+
+	double roundTwoDecimals(double d) {
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
+		return Double.valueOf(twoDForm.format(d));
+	}
+
+
 }

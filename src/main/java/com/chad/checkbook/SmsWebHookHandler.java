@@ -1,7 +1,9 @@
 package com.chad.checkbook;
 
+import com.chad.checkbook.model.Bill;
 import com.chad.checkbook.model.Item;
 import com.chad.checkbook.repository.ItemRepository;
+import com.chad.checkbook.service.BillService;
 import com.chad.checkbook.service.ItemService;
 import com.twilio.twiml.MessagingResponse;
 import com.twilio.twiml.messaging.Message;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +36,9 @@ public class SmsWebHookHandler extends HttpServlet {
 	
 	@Autowired
 	ItemService service;
+
+	@Autowired
+	BillService billService;
 	
     private final Map<String, Integer> messageCounts = new ConcurrentHashMap<>();
 
@@ -43,26 +49,64 @@ public class SmsWebHookHandler extends HttpServlet {
     	HttpServletResponse response,
         @RequestParam("From") String from,
         @RequestParam("Body") String body) {
-    	
-    	HttpSession session = request.getSession(true);
-    	
-        int thisMessageCount = messageCounts.compute(from, (k,v) -> (v == null) ? 1 : v+1);
 
-        String plural = (thisMessageCount > 1) ? "messages" : "message";
-        String message = String.format(
-            "☎️ Hello from Twilio. You've sent %d %s, and this one said '%s'",
-            thisMessageCount, plural, body);
-        
-        String messageTwo = "How much";
+		HttpSession session = request.getSession(true);
 
-        Integer counter = (Integer) session.getAttribute("counter");
+		Integer counter = (Integer) session.getAttribute("counter");
 
-        if(message.toLowerCase().contains("balance")) {
-        	return new MessagingResponse.Builder()
-					.message(new Message.Builder("Current balance: " + String.valueOf(service.getCurrentBalance())).build())
+		if (body.toLowerCase().contains("balance")) {
+			return new MessagingResponse.Builder()
+					.message(new Message.Builder("Current balance: " + service.getCurrentBalance()).build())
+					.build().toXml();
+		} else if (body.toLowerCase().contains("deposit") && Character.isWhitespace(body.charAt(7))) {
+			int length = body.length();
+			double deposit = Double.parseDouble(body.substring(8, length));
+			Item item = new Item("deposit");
+			item.setDeposit(deposit);
+			item.setWithdraw(0.0);
+			service.calculateDeposit(item);
+			return new MessagingResponse.Builder()
+					.message(new Message.Builder("You deposited: " + deposit).build())
+					.build().toXml();
+		} else if (body.toLowerCase().contains("withdraw") && Character.isWhitespace(body.charAt(8))) {
+			int length = body.length();
+			try {
+				double withdraw = Double.parseDouble(body.substring(9, length));
+				Item item = new Item("withdraw");
+				item.setWithdraw(withdraw);
+				item.setDeposit(0.0);
+				service.calculateWithdraw(item);
+				return new MessagingResponse.Builder()
+						.message(new Message.Builder("You withdrew: " + withdraw).build())
+						.build().toXml();
+			} catch(Exception e) {
+				return new MessagingResponse.Builder()
+						.message(new Message.Builder("Not a recognized command, try again...").build())
+						.build().toXml();
+			}
+		} else if (body.toLowerCase().contains("due")) {
+			List<Bill> list = billService.getBillsDueToday();
+			StringBuilder due = new StringBuilder("Due today: \n");
+			for (Bill b: list) {
+				due.append(b.getName());
+				due.append(" - $").append(b.getAmount()).append("\n");
+			}
+			return new MessagingResponse.Builder()
+					.message(new Message.Builder(due.toString()).build())
 					.build().toXml();
 		}
-
+		else {
+			return new MessagingResponse.Builder()
+					.message(new Message.Builder("Not a recognized command, try one of the following:\n\n" +
+							"Balance\n" +
+							"Deposit 1050.28\n" +
+							"Withdraw 55.34\n" +
+							"Due\n\n" +
+							"You can also visit www.twilio.com").build())
+					.build().toXml();
+		}
+	}
+/*
         if (message.contains("deposit")) {
         	session = request.getSession();
             if (counter == null) {
@@ -113,4 +157,5 @@ public class SmsWebHookHandler extends HttpServlet {
     	
     	return false;
     }
+    */
 }

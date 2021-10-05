@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 public class Item {
@@ -20,6 +21,12 @@ public class Item {
 	private double balance;
 	
 	public Item() {}
+
+	public Item(String type) {
+		this.date = LocalDate.now().toString();
+		this.description = "";
+		this.type = type;
+	}
 	
 	// Start balance
 	public Item(String date, String description, double balance) {

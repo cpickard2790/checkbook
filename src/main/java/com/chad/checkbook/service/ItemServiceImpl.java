@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.chad.checkbook.TwilloSender;
 import com.chad.checkbook.model.Item;
 import com.chad.checkbook.repository.ItemRepository;
+import static com.chad.checkbook.service.ServiceHelper.roundTwoDecimals;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -50,11 +51,4 @@ public class ItemServiceImpl implements ItemService {
 		}
 		return 0.0;
 	}
-
-	double roundTwoDecimals(double d) {
-		DecimalFormat twoDForm = new DecimalFormat("#.##");
-		return Double.valueOf(twoDForm.format(d));
-	}
-
-
 }

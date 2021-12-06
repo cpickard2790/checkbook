@@ -1,9 +1,6 @@
 package com.chad.checkbook.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class User {
@@ -11,12 +8,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String username;
+    @Column(unique = true)
+    private String email;
+
     private String password;
     private String phoneNumber;
 
-    public User(String username, String password, String phoneNumber) {
-        this.username = username;
+    public User() {}
+
+    public User(String email, String password, String phoneNumber) {
+        this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
     }
@@ -29,12 +30,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

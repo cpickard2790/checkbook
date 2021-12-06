@@ -1,5 +1,6 @@
 package com.chad.checkbook.service;
 
+import java.text.DecimalFormat;
 import java.time.MonthDay;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.chad.checkbook.model.Bill;
 import com.chad.checkbook.repository.BillRepository;
+
+import static com.chad.checkbook.service.ServiceHelper.roundTwoDecimals;
 
 @Service
 public class BillServiceImpl implements BillService {
@@ -26,6 +29,7 @@ public class BillServiceImpl implements BillService {
 		for(double amount: amounts) {
 			total = total + amount;
 		}
+		roundTwoDecimals(total);
 		return total;
 	}
 	
